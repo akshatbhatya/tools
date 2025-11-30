@@ -1,0 +1,148 @@
+@extends('layouts.app')
+
+@section('title', $title)
+@section('meta_description', $description)
+
+@section('content')
+    <div style="max-width: 900px; margin: var(--spacing-2xl) auto; padding: 0 var(--spacing-lg);">
+        <div class="tool-header">
+            <h1><i class="fas fa-robot"></i> {{ $title }}</h1>
+            <p>{{ $description }}</p>
+        </div>
+
+        <div class="card">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-xl);">
+                <div>
+                    <h3>Configuration</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Default Policy</label>
+                        <select id="defaultPolicy" class="form-select" onchange="generateRobots()">
+                            <option value="allow">Allow All (Allow all search engines)</option>
+                            <option value="disallow">Disallow All (Block all search engines)</option>
+                            <option value="custom">Custom Rules</option>
+                        </select>
+                    </div>
+
+                    <div id="customRules" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Disallow Paths (one per line)</label>
+                            <textarea id="disallowPaths" class="form-input" rows="5"
+                                placeholder="/admin/&#10;/private/&#10;/temp/" onchange="generateRobots()"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Allow Paths (one per line)</label>
+                            <textarea id="allowPaths" class="form-input" rows="3" placeholder="/public/&#10;/assets/"
+                                onchange="generateRobots()"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Sitemap URL (optional)</label>
+                        <input type="url" id="sitemapUrl" class="form-input" placeholder="https://example.com/sitemap.xml"
+                            onchange="generateRobots()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Crawl Delay (seconds, optional)</label>
+                        <input type="number" id="crawlDelay" class="form-input" min="0" max="60" placeholder="0"
+                            onchange="generateRobots()">
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Generated robots.txt</h3>
+                    <textarea id="output" class="form-input" style="min-height: 300px; font-family: monospace;"
+                        readonly></textarea>
+
+                    <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                        <button onclick="copyOutput()" class="btn btn-primary" style="flex: 1;">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                        <button onclick="downloadRobots()" class="btn btn-outline" style="flex: 1;">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: var(--spacing-xl);">
+            <h3>About robots.txt:</h3>
+            <p>The robots.txt file tells search engines which pages or sections of your site they can or cannot crawl. Place
+                this file in your website's root directory.</p>
+            <ul style="padding-left: var(--spacing-lg); margin-top: var(--spacing-md);">
+                <li><strong>User-agent:</strong> Specifies which crawlers the rules apply to</li>
+                <li><strong>Disallow:</strong> Paths that should not be crawled</li>
+                <li><strong>Allow:</strong> Paths that can be crawled (overrides disallow)</li>
+                <li><strong>Sitemap:</strong> Location of your XML sitemap</li>
+                <li><strong>Crawl-delay:</strong> Time delay between successive requests</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('defaultPolicy').addEventListener('change', function () {
+            document.getElementById('customRules').style.display =
+                this.value === 'custom' ? 'block' : 'none';
+        });
+
+        function generateRobots() {
+            const policy = document.getElementById('defaultPolicy').value;
+            const sitemapUrl = document.getElementById('sitemapUrl').value.trim();
+            const crawlDelay = document.getElementById('crawlDelay').value.trim();
+
+            let robots = '# robots.txt for ' + window.location.hostname + '\n';
+            robots += '# Generated by ToolsHub\n\n';
+            robots += 'User-agent: *\n';
+
+            if (policy === 'allow') {
+                robots += 'Disallow:\n';
+            } else if (policy === 'disallow') {
+                robots += 'Disallow: /\n';
+            } else {
+                const disallowPaths = document.getElementById('disallowPaths').value.trim().split('\n');
+                disallowPaths.forEach(path => {
+                    if (path.trim()) robots += `Disallow: ${path.trim()}\n`;
+                });
+
+                const allowPaths = document.getElementById('allowPaths').value.trim().split('\n');
+                allowPaths.forEach(path => {
+                    if (path.trim()) robots += `Allow: ${path.trim()}\n`;
+                });
+            }
+
+            if (crawlDelay) {
+                robots += `\nCrawl-delay: ${crawlDelay}\n`;
+            }
+
+            if (sitemapUrl) {
+                robots += `\nSitemap: ${sitemapUrl}\n`;
+            }
+
+            document.getElementById('output').value = robots;
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('output').value;
+            copyToClipboard(output);
+        }
+
+        function downloadRobots() {
+            const output = document.getElementById('output').value;
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'robots.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('robots.txt downloaded!');
+        }
+
+        generateRobots();
+    </script>
+@endsection
