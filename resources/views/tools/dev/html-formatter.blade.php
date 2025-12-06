@@ -11,6 +11,11 @@
             padding: 0 var(--spacing-lg);
         }
 
+        .tool-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
         .code-editor {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -102,6 +107,7 @@
 @endsection
 
 @section('scripts')
+    @verbatim
     <script>
         function formatHTML() {
             const input = document.getElementById('input').value.trim();
@@ -144,6 +150,7 @@
             let formatted = '';
             let indent = 0;
             const tab = '  '; // 2 spaces
+            const selfClosingTags = ['input', 'br', 'img', 'hr', 'meta', 'link'];
 
             html.split(/>\s*</).forEach((node) => {
                 if (node.match(/^\/\w/)) {
@@ -162,8 +169,11 @@
                 }
                 formatted += '\n';
 
-                if (node.match(/^<?\w[^>]*[^/]$/) && !node.startsWith("input") && !node.startsWith("br") && !node.startsWith("img") && !node.startsWith("hr") && !node.startsWith("meta") && !node.startsWith("link")) {
-                    // Opening tag
+                // Check if it's an opening tag (not self-closing)
+                const isSelfClosing = selfClosingTags.some(tag => node.startsWith(tag));
+                const isOpeningTag = node.match(/^<?\w/) && !node.match(/\/$/) && !isSelfClosing;
+                
+                if (isOpeningTag) {
                     indent++;
                 }
             });
@@ -207,4 +217,5 @@
         // Format on page load
         formatHTML();
     </script>
+    @endverbatim
 @endsection

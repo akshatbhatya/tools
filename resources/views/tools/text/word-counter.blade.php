@@ -65,10 +65,29 @@
             </div>
 
             <div class="stats-grid">
-
-                <div class="flex gap-md" style="margin-top: var(--spacing-lg);">
-                    <button onclick="copyText()" class="btn btn-primary">📋 Copy Text</button>
-                    <button onclick="clearText()" class="btn btn-outline">🗑️ Clear</button>
+                <div class="stat-card">
+                    <span class="stat-value" id="wordCount">0</span>
+                    <span class="stat-label">Words</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="charCount">0</span>
+                    <span class="stat-label">Characters</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="charCountNoSpaces">0</span>
+                    <span class="stat-label">Characters (no spaces)</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="sentenceCount">0</span>
+                    <span class="stat-label">Sentences</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="paragraphCount">0</span>
+                    <span class="stat-label">Paragraphs</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="readingTime">0</span>
+                    <span class="stat-label">Reading Time (min)</span>
                 </div>
             </div>
 

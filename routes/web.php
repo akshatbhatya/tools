@@ -12,6 +12,11 @@ use App\Http\Controllers\CalculatorController;
 // Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Login redirect (for compatibility)
+Route::get('/login', function () {
+    return redirect()->route('admin.login');
+})->name('login');
+
 // PDF Tools
 Route::prefix('tools/pdf')->group(function () {
     Route::get('/merge', [PdfToolsController::class, 'merge'])->name('pdf.merge');
@@ -86,3 +91,5 @@ Route::prefix('tools/calc')->group(function () {
     Route::get('/date', [CalculatorController::class, 'date'])->name('calc.date');
 });
 
+// Admin Routes
+require __DIR__ . '/admin.php';
