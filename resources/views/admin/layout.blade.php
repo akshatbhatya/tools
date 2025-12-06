@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard') - ToolsHub</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2300f2ff' d='M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C2.5 108.5 0 102.4 0 96s2.5-12.5 7-17l40-40c4.5-4.5 10.6-7 17-7s12.5 2.5 17 7l37.1 37.1 33.9-33.9zM224 96c0-17.7 14.3-32 32-32h96c17.7 0 32 14.3 32 32v32h-160V96zM465 113l-40 40c-4.5 4.5-10.6 7-17 7s-12.5-2.5-17-7l-33.9-33.9L320 152.1c-8.9 9.9-24 10.7-33.9 1.8s-10.7-24-1.8-33.9l72-80c4.4-4.9 10.6-7.8 17.2-7.9s12.9 2.4 17.6 7L441 79c4.5 4.5 7 10.6 7 17s-2.5 12.5-7 17zM0 160v256c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V160H0zm256 128a32 32 0 1 1 0 64 32 32 0 1 1 0-64z'/%3E%3C/svg%3E">
+
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
