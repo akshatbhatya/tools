@@ -76,7 +76,8 @@
                             <i class="fas fa-trash"></i> Clear
                         </button>
                     </div>
-                    <textarea id="input" class="form-input" placeholder="Paste your HTML code here..."><!DOCTYPE html><html><head><title>Example</title></head><body><div class="container"><h1>Hello World</h1><p>This is a paragraph.</p></div></body></html></textarea>
+                    <textarea id="input" class="form-input"
+                        placeholder="Paste your HTML code here..."><!DOCTYPE html><html><head><title>Example</title></head><body><div class="container"><h1>Hello World</h1><p>This is a paragraph.</p></div></body></html></textarea>
                 </div>
 
                 <div class="code-panel">
@@ -89,14 +90,16 @@
                             <i class="fas fa-download"></i> Download
                         </button>
                     </div>
-                    <textarea id="output" class="form-input" readonly placeholder="Formatted HTML will appear here..."></textarea>
+                    <textarea id="output" class="form-input" readonly
+                        placeholder="Formatted HTML will appear here..."></textarea>
                 </div>
             </div>
         </div>
 
         <div class="card" style="margin-top: var(--spacing-xl);">
             <h3>About HTML Formatter:</h3>
-            <p>This tool helps you format and beautify HTML code for better readability. It adds proper indentation and line breaks to make your code structure clear.</p>
+            <p>This tool helps you format and beautify HTML code for better readability. It adds proper indentation and line
+                breaks to make your code structure clear.</p>
             <ul style="padding-left: var(--spacing-lg); margin-top: var(--spacing-md);">
                 <li><strong>Format:</strong> Beautifies HTML with proper indentation</li>
                 <li><strong>Minify:</strong> Removes whitespace and line breaks to reduce file size</li>
@@ -108,114 +111,114 @@
 
 @section('scripts')
     @verbatim
-    <script>
-        function formatHTML() {
-            const input = document.getElementById('input').value.trim();
-            
-            if (!input) {
-                showToast('Please enter HTML code!', 'error');
-                return;
-            }
+        <script>
+            function formatHTML() {
+                const input = document.getElementById('input').value.trim();
 
-            try {
-                const formatted = beautifyHTML(input);
-                document.getElementById('output').value = formatted;
-                showToast('HTML formatted successfully!');
-            } catch (error) {
-                showToast('Error formatting HTML: ' + error.message, 'error');
-            }
-        }
-
-        function minifyHTML() {
-            const input = document.getElementById('input').value.trim();
-            
-            if (!input) {
-                showToast('Please enter HTML code!', 'error');
-                return;
-            }
-
-            // Simple minification: remove extra whitespace and line breaks
-            const minified = input
-                .replace(/\n\s*\n/g, '\n')
-                .replace(/\n/g, '')
-                .replace(/\s+/g, ' ')
-                .replace(/>\s+</g, '><')
-                .trim();
-
-            document.getElementById('output').value = minified;
-            showToast('HTML minified successfully!');
-        }
-
-        function beautifyHTML(html) {
-            let formatted = '';
-            let indent = 0;
-            const tab = '  '; // 2 spaces
-            const selfClosingTags = ['input', 'br', 'img', 'hr', 'meta', 'link'];
-
-            html.split(/>\s*</).forEach((node) => {
-                if (node.match(/^\/\w/)) {
-                    // Closing tag
-                    indent = Math.max(0, indent - 1);
+                if (!input) {
+                    showToast('Please enter HTML code!', 'error');
+                    return;
                 }
 
-                formatted += tab.repeat(indent);
-                
-                if (!node.startsWith('<')) {
-                    formatted += '<';
+                try {
+                    const formatted = beautifyHTML(input);
+                    document.getElementById('output').value = formatted;
+                    showToast('HTML formatted successfully!');
+                } catch (error) {
+                    showToast('Error formatting HTML: ' + error.message, 'error');
                 }
-                formatted += node;
-                if (!node.endsWith('>')) {
-                    formatted += '>';
-                }
-                formatted += '\n';
-
-                // Check if it's an opening tag (not self-closing)
-                const isSelfClosing = selfClosingTags.some(tag => node.startsWith(tag));
-                const isOpeningTag = node.match(/^<?\w/) && !node.match(/\/$/) && !isSelfClosing;
-                
-                if (isOpeningTag) {
-                    indent++;
-                }
-            });
-
-            return formatted.trim();
-        }
-
-        function clearInput() {
-            document.getElementById('input').value = '';
-            document.getElementById('output').value = '';
-        }
-
-        function copyOutput() {
-            const output = document.getElementById('output').value;
-            if (!output) {
-                showToast('Nothing to copy!', 'error');
-                return;
-            }
-            copyToClipboard(output);
-        }
-
-        function downloadHTML() {
-            const output = document.getElementById('output').value;
-            if (!output) {
-                showToast('Nothing to download!', 'error');
-                return;
             }
 
-            const blob = new Blob([output], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'formatted.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast('HTML downloaded!');
-        }
+            function minifyHTML() {
+                const input = document.getElementById('input').value.trim();
 
-        // Format on page load
-        formatHTML();
-    </script>
+                if (!input) {
+                    showToast('Please enter HTML code!', 'error');
+                    return;
+                }
+
+                // Simple minification: remove extra whitespace and line breaks
+                const minified = input
+                    .replace(/\n\s*\n/g, '\n')
+                    .replace(/\n/g, '')
+                    .replace(/\s+/g, ' ')
+                    .replace(/>\s+</g, '><')
+                    .trim();
+
+                document.getElementById('output').value = minified;
+                showToast('HTML minified successfully!');
+            }
+
+            function beautifyHTML(html) {
+                let formatted = '';
+                let indent = 0;
+                const tab = '  '; // 2 spaces
+                const selfClosingTags = ['input', 'br', 'img', 'hr', 'meta', 'link'];
+
+                html.split(/>\s*</).forEach((node) => {
+                    if (node.match(/^\/\w/)) {
+                        // Closing tag
+                        indent = Math.max(0, indent - 1);
+                    }
+
+                    formatted += tab.repeat(indent);
+
+                    if (!node.startsWith('<')) {
+                        formatted += '<';
+                    }
+                    formatted += node;
+                    if (!node.endsWith('>')) {
+                        formatted += '>';
+                    }
+                    formatted += '\n';
+
+                    // Check if it's an opening tag (not self-closing)
+                    const isSelfClosing = selfClosingTags.some(tag => node.startsWith(tag));
+                    const isOpeningTag = node.match(/^<{0,1}\w/) && !node.match(/\/$/) && !isSelfClosing;
+
+                    if (isOpeningTag) {
+                        indent++;
+                    }
+                });
+
+                return formatted.trim();
+            }
+
+            function clearInput() {
+                document.getElementById('input').value = '';
+                document.getElementById('output').value = '';
+            }
+
+            function copyOutput() {
+                const output = document.getElementById('output').value;
+                if (!output) {
+                    showToast('Nothing to copy!', 'error');
+                    return;
+                }
+                copyToClipboard(output);
+            }
+
+            function downloadHTML() {
+                const output = document.getElementById('output').value;
+                if (!output) {
+                    showToast('Nothing to download!', 'error');
+                    return;
+                }
+
+                const blob = new Blob([output], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'formatted.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('HTML downloaded!');
+            }
+
+            // Format on page load
+            formatHTML();
+        </script>
     @endverbatim
 @endsection
