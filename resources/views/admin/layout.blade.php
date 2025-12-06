@@ -372,6 +372,10 @@
                     class="nav-item {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
                     <i class="fas fa-search"></i> SEO Pages
                 </a>
+                <a href="{{ route('admin.contacts.index') }}"
+                    class="nav-item {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
+                    <i class="fas fa-envelope"></i> Messages
+                </a>
                 <a href="{{ route('home') }}" class="nav-item" target="_blank">
                     <i class="fas fa-globe"></i> View Site
                 </a>

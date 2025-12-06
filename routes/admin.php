@@ -25,4 +25,9 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('/pages/sync', [AdminController::class, 'syncPages'])->name('pages.sync');
     Route::get('/pages/{id}/edit', [AdminController::class, 'editPage'])->name('pages.edit');
     Route::post('/pages/{id}', [AdminController::class, 'updatePage'])->name('pages.update');
+    // Contact Messages Management
+    Route::get('/contacts', [AdminController::class, 'contacts'])->name('contacts.index');
+    Route::get('/contacts/{id}/edit', [AdminController::class, 'editContact'])->name('contacts.edit');
+    Route::post('/contacts/{id}', [AdminController::class, 'updateContact'])->name('contacts.update');
+    Route::delete('/contacts/{id}', [AdminController::class, 'deleteContact'])->name('contacts.delete');
 });

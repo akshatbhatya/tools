@@ -8,6 +8,7 @@ use App\Http\Controllers\ImageToolsController;
 use App\Http\Controllers\SeoToolsController;
 use App\Http\Controllers\DeveloperToolsController;
 use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\PageController;
 
 // Homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -90,6 +91,13 @@ Route::prefix('tools/calc')->group(function () {
     Route::get('/percentage', [CalculatorController::class, 'percentage'])->name('calc.percentage');
     Route::get('/date', [CalculatorController::class, 'date'])->name('calc.date');
 });
+
+// Static Pages
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::post('/contact', [PageController::class, 'submitContact'])->name('contact.submit');
 
 // Admin Routes
 require __DIR__ . '/admin.php';

@@ -209,4 +209,49 @@ class AdminController extends Controller
 
         return back()->with('success', "Synced successfully! $addedCount new pages added.");
     }
+
+    /**
+     * Show Contacts list
+     */
+    public function contacts()
+    {
+        $contacts = \App\Models\Contact::latest()->paginate(10);
+        return view('admin.contacts.index', compact('contacts'));
+    }
+
+    /**
+     * Show Edit Contact form
+     */
+    public function editContact($id)
+    {
+        $contact = \App\Models\Contact::findOrFail($id);
+        return view('admin.contacts.edit', compact('contact'));
+    }
+
+    /**
+     * Update Contact status
+     */
+    public function updateContact(Request $request, $id)
+    {
+        $contact = \App\Models\Contact::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:new,read,replied',
+        ]);
+
+        $contact->update(['status' => $request->status]);
+
+        return redirect()->route('admin.contacts.index')->with('success', 'Contact status updated successfully!');
+    }
+
+    /**
+     * Delete Contact
+     */
+    public function deleteContact($id)
+    {
+        $contact = \App\Models\Contact::findOrFail($id);
+        $contact->delete();
+
+        return redirect()->route('admin.contacts.index')->with('success', 'Contact message deleted successfully!');
+    }
 }
