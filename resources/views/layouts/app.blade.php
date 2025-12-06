@@ -83,7 +83,7 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container">
-            <a href="{{ url('/') }}" class="navbar-brand">🛠️ ToolsHub</a>
+            <a href="{{ url('/') }}" class="navbar-brand"><i class="fas fa-toolbox"></i> ToolsHub</a>
 
             <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
                 <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
@@ -113,7 +113,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>🛠️ ToolsHub</h4>
+                    <h4><i class="fas fa-toolbox"></i> ToolsHub</h4>
                     <p>Your one-stop destination for free online tools. Boost productivity with our collection of PDF,
                         text, image, SEO, and developer tools.</p>
                 </div>

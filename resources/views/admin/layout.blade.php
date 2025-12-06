@@ -5,17 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard') - ToolsHub</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
             min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 242, 255, 0.08), transparent 25%);
+            background-attachment: fixed;
         }
 
         .admin-container {
@@ -26,126 +31,155 @@
         /* Sidebar */
         .sidebar {
             width: 260px;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--bg-surface);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            padding: var(--spacing-lg) 0;
+            display: flex;
+            flex-direction: column;
             backdrop-filter: blur(10px);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px 0;
         }
 
         .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 2px solid #f0f0f0;
+            padding: 0 var(--spacing-lg) var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: var(--spacing-md);
         }
 
         .sidebar-header h2 {
-            color: #667eea;
-            font-size: 24px;
+            color: var(--text-main);
+            font-size: 1.5rem;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .sidebar-header h2 i {
+            color: var(--neon-primary);
         }
 
         .sidebar-nav {
-            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            padding: 0 var(--spacing-md);
         }
 
         .nav-item {
-            display: block;
-            padding: 15px 20px;
-            color: #333;
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--text-muted);
             text-decoration: none;
             transition: all 0.3s ease;
-            border-left: 3px solid transparent;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            border: 1px solid transparent;
         }
 
         .nav-item:hover,
         .nav-item.active {
-            background: rgba(102, 126, 234, 0.1);
-            border-left-color: #667eea;
-            color: #667eea;
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--neon-primary);
+            border-color: rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.1) inset;
         }
 
         .nav-item i {
-            margin-right: 10px;
-            width: 20px;
-            display: inline-block;
+            width: 24px;
+            margin-right: var(--spacing-sm);
+            text-align: center;
         }
 
         /* Main Content */
         .main-content {
             flex: 1;
-            padding: 30px;
+            padding: var(--spacing-xl);
             overflow-y: auto;
         }
 
         .top-bar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
+            background: var(--bg-surface);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xl);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
         }
 
         .top-bar h1 {
-            color: #333;
-            font-size: 28px;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: var(--spacing-md);
         }
 
         .logout-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 14px;
-            transition: transform 0.2s;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: rgba(255, 0, 85, 0.1);
+            color: var(--neon-accent);
+            border-color: var(--neon-accent);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
         }
 
         .content-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--bg-surface);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         /* Alerts */
         .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-lg);
             animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
         }
 
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--neon-success);
+            border: 1px solid rgba(0, 255, 157, 0.2);
         }
 
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
+            background: rgba(255, 0, 85, 0.1);
+            color: var(--neon-accent);
+            border: 1px solid rgba(255, 0, 85, 0.2);
         }
 
         @keyframes slideIn {
             from {
-                transform: translateY(-20px);
+                transform: translateY(-10px);
                 opacity: 0;
             }
 
@@ -155,66 +189,45 @@
             }
         }
 
-        /* Form Styles */
+        /* Form Styles Override */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: var(--spacing-lg);
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            transition: all 0.2s;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #667eea;
-        }
-
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: var(--gradient-glow);
+            color: var(--bg-deep);
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
         }
 
         .btn-primary:hover {
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -224,24 +237,26 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>🛠️ ToolsHub</h2>
-                <p style="color: #666; font-size: 12px; margin-top: 5px;">Admin Panel</p>
+                <h2><i class="fas fa-toolbox"></i> ToolsHub</h2>
+                <p
+                    style="color: var(--text-muted); font-size: 0.75rem; margin-top: var(--spacing-xs); margin-left: 2.5rem;">
+                    Admin Panel</p>
             </div>
             <nav class="sidebar-nav">
                 <a href="{{ route('admin.dashboard') }}"
                     class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <i>📊</i> Dashboard
+                    <i class="fas fa-chart-line"></i> Dashboard
                 </a>
                 <a href="{{ route('admin.settings.google-tags') }}"
                     class="nav-item {{ request()->routeIs('admin.settings.google-tags') ? 'active' : '' }}">
-                    <i>🏷️</i> Google Tags
+                    <i class="fas fa-tags"></i> Google Tags
                 </a>
                 <a href="{{ route('admin.settings.google-ads') }}"
                     class="nav-item {{ request()->routeIs('admin.settings.google-ads') ? 'active' : '' }}">
-                    <i>📢</i> Google Ads
+                    <i class="fas fa-bullhorn"></i> Google Ads
                 </a>
                 <a href="{{ route('home') }}" class="nav-item" target="_blank">
-                    <i>🌐</i> View Site
+                    <i class="fas fa-globe"></i> View Site
                 </a>
             </nav>
         </aside>
@@ -251,17 +266,19 @@
             <div class="top-bar">
                 <h1>@yield('page-title', 'Dashboard')</h1>
                 <div class="user-info">
-                    <span style="color: #666;">{{ Auth::guard('admin')->user()->email }}</span>
+                    <span style="color: var(--text-muted);">{{ Auth::guard('admin')->user()->email }}</span>
                     <form action="{{ route('admin.logout') }}" method="POST" style="display: inline;">
                         @csrf
-                        <button type="submit" class="logout-btn">Logout</button>
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
                     </form>
                 </div>
             </div>
 
             @if(session('success'))
                 <div class="alert alert-success">
-                    {{ session('success') }}
+                    <i class="fas fa-check-circle"></i> {{ session('success') }}
                 </div>
             @endif
 
@@ -269,7 +286,7 @@
                 <div class="alert alert-error">
                     <ul style="margin-left: 20px;">
                         @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                            <li><i class="fas fa-exclamation-circle"></i> {{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>

@@ -3,6 +3,30 @@
 @section('title', $title)
 @section('meta_description', $description)
 
+@section('styles')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <style>
+        .img-container {
+            max-width: 100%;
+            max-height: 500px;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .img-container img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .preview-container {
+            overflow: hidden;
+            width: 200px;
+            height: 200px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+    </style>
+@endsection
+
 @section('content')
     <div style="max-width: 900px; margin: var(--spacing-2xl) auto; padding: 0 var(--spacing-lg);">
         <div class="tool-header">
@@ -17,12 +41,12 @@
             </div>
 
             <div id="cropControls" style="display: none;">
-                <div style="text-align: center; margin: var(--spacing-lg) 0;">
-                    <img id="preview" style="max-width: 100%; border-radius: var(--radius-md);">
+                <div class="img-container">
+                    <img id="image" src="" alt="Picture to crop">
                 </div>
 
                 <p style="color: var(--text-muted); text-align: center; margin-bottom: var(--spacing-md);">
-                    <i class="fas fa-info-circle"></i> Click and drag on the image to select crop area
+                    <i class="fas fa-info-circle"></i> Drag to move, scroll to zoom, drag handles to resize crop area
                 </p>
 
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-sm);">
@@ -32,12 +56,20 @@
                     <button onclick="reset()" class="btn btn-outline">
                         <i class="fas fa-rotate-left"></i> Reset
                     </button>
+                    <button onclick="rotate(-90)" class="btn btn-outline">
+                        <i class="fas fa-undo"></i> Rotate Left
+                    </button>
+                    <button onclick="rotate(90)" class="btn btn-outline">
+                        <i class="fas fa-redo"></i> Rotate Right
+                    </button>
                 </div>
 
                 <div id="result" style="margin-top: var(--spacing-xl); display: none;">
                     <h3>Cropped Image</h3>
-                    <canvas id="canvas"
-                        style="max-width: 100%; border-radius: var(--radius-md); margin-top: var(--spacing-md);"></canvas>
+                    <div style="text-align: center;">
+                        <img id="croppedImage"
+                            style="max-width: 100%; border-radius: var(--radius-md); margin-top: var(--spacing-md); box-shadow: var(--shadow-md);">
+                    </div>
                     <button onclick="downloadImage()" class="btn btn-primary"
                         style="width: 100%; margin-top: var(--spacing-md);">
                         <i class="fas fa-download"></i> Download
@@ -46,65 +78,92 @@
             </div>
         </div>
     </div>
+@endsection
 
+@section('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
-        let originalImage = null;
+        let cropper = null;
+        const image = document.getElementById('image');
+        const input = document.getElementById('imageInput');
 
-        document.getElementById('imageInput').addEventListener('change', function (e) {
+        input.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function (event) {
-                const img = document.getElementById('preview');
-                img.onload = function () {
-                    originalImage = new Image();
-                    originalImage.src = event.target.result;
-                    document.getElementById('cropControls').style.display = 'block';
+                // Destroy existing cropper if any
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                image.src = event.target.result;
+                document.getElementById('cropControls').style.display = 'block';
+                document.getElementById('result').style.display = 'none';
+
+                // Initialize cropper after image loads
+                image.onload = function () {
+                    cropper = new Cropper(image, {
+                        aspectRatio: NaN, // Free crop
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 0.8,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: true,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                    });
                 };
-                img.src = event.target.result;
             };
             reader.readAsDataURL(file);
         });
 
         function cropImage() {
-            if (!originalImage) return showToast('Please upload an image first!', 'error');
+            if (!cropper) return;
 
-            // Simple center crop (50% of original size)
-            const canvas = document.getElementById('canvas');
-            const cropWidth = originalImage.width * 0.5;
-            const cropHeight = originalImage.height * 0.5;
-            const startX = (originalImage.width - cropWidth) / 2;
-            const startY = (originalImage.height - cropHeight) / 2;
+            const canvas = cropper.getCroppedCanvas();
+            if (!canvas) {
+                showToast('Could not crop image', 'error');
+                return;
+            }
 
-            canvas.width = cropWidth;
-            canvas.height = cropHeight;
-
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(originalImage, startX, startY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+            const croppedImage = document.getElementById('croppedImage');
+            croppedImage.src = canvas.toDataURL();
 
             document.getElementById('result').style.display = 'block';
             document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             showToast('Image cropped successfully!');
         }
 
+        function rotate(degree) {
+            if (cropper) {
+                cropper.rotate(degree);
+            }
+        }
+
         function reset() {
-            document.getElementById('result').style.display = 'none';
+            if (cropper) {
+                cropper.reset();
+                document.getElementById('result').style.display = 'none';
+            }
         }
 
         function downloadImage() {
-            const canvas = document.getElementById('canvas');
-            canvas.toBlob(function (blob) {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'cropped-image.png';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showToast('Image downloaded!');
-            });
+            const croppedImage = document.getElementById('croppedImage');
+            if (!croppedImage.src) return;
+
+            const link = document.createElement('a');
+            link.download = 'cropped-image.png';
+            link.href = croppedImage.src;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Image downloaded!');
         }
     </script>
 @endsection
