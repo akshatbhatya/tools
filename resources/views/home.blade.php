@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'ToolsHub - Future of Online Tools')
-@section('meta_description', 'Access next-gen online tools including PDF merge, image compressor, word counter, JSON formatter, and more. No signup required!')
-@section('meta_keywords', 'online tools, PDF tools, image compressor, word counter, JSON formatter, calculators, SEO tools')
-
 @section('content')
     <!-- Hero Section -->
     <section class="hero">

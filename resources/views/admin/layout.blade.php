@@ -25,11 +25,15 @@
                 radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.08), transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(0, 242, 255, 0.08), transparent 25%);
             background-attachment: fixed;
+            margin: 0;
+            font-family: var(--font-sans);
         }
 
         .admin-container {
             display: flex;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
         /* Sidebar */
@@ -41,12 +45,20 @@
             display: flex;
             flex-direction: column;
             backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            height: 100vh;
+            position: sticky;
+            top: 0;
         }
 
         .sidebar-header {
             padding: 0 var(--spacing-lg) var(--spacing-lg);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             margin-bottom: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .sidebar-header h2 {
@@ -56,6 +68,7 @@
             display: flex;
             align-items: center;
             gap: var(--spacing-sm);
+            margin: 0;
         }
 
         .sidebar-header h2 i {
@@ -67,6 +80,7 @@
             flex-direction: column;
             gap: var(--spacing-xs);
             padding: 0 var(--spacing-md);
+            overflow-y: auto;
         }
 
         .nav-item {
@@ -100,6 +114,7 @@
             flex: 1;
             padding: var(--spacing-xl);
             overflow-y: auto;
+            width: 100%;
         }
 
         .top-bar {
@@ -113,6 +128,22 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
         }
 
         .top-bar h1 {
@@ -156,6 +187,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(10px);
+            overflow-x: auto;
         }
 
         /* Alerts */
@@ -233,18 +265,95 @@
             box-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
             transform: translateY(-2px);
         }
+
+        /* Responsive Utilities */
+        @media (max-width: 1024px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                top: 0;
+                bottom: 0;
+                height: 100vh;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            }
+
+            .sidebar.active {
+                transform: translateX(260px);
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .main-content {
+                padding: var(--spacing-md);
+            }
+
+            .top-bar {
+                padding: var(--spacing-md);
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+            }
+
+            .top-bar-left {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .grid-cols-3,
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+
+            .content-card {
+                padding: var(--spacing-md);
+            }
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
     </style>
 </head>
 
 <body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="admin-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2><i class="fas fa-toolbox"></i> ToolsHub</h2>
-                <p
-                    style="color: var(--text-muted); font-size: 0.75rem; margin-top: var(--spacing-xs); margin-left: 2.5rem;">
-                    Admin Panel</p>
+                <button class="mobile-toggle" id="sidebarClose" style="font-size: 1.2rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="padding: 0 var(--spacing-lg); margin-bottom: var(--spacing-md);">
+                <p style="color: var(--text-muted); font-size: 0.75rem; margin: 0;">Admin Panel</p>
             </div>
             <nav class="sidebar-nav">
                 <a href="{{ route('admin.dashboard') }}"
@@ -259,6 +368,10 @@
                     class="nav-item {{ request()->routeIs('admin.settings.google-ads') ? 'active' : '' }}">
                     <i class="fas fa-bullhorn"></i> Google Ads
                 </a>
+                <a href="{{ route('admin.pages.index') }}"
+                    class="nav-item {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
+                    <i class="fas fa-search"></i> SEO Pages
+                </a>
                 <a href="{{ route('home') }}" class="nav-item" target="_blank">
                     <i class="fas fa-globe"></i> View Site
                 </a>
@@ -268,7 +381,12 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="top-bar">
-                <h1>@yield('page-title', 'Dashboard')</h1>
+                <div class="top-bar-left">
+                    <button class="mobile-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>@yield('page-title', 'Dashboard')</h1>
+                </div>
                 <div class="user-info">
                     <span style="color: var(--text-muted);">{{ Auth::guard('admin')->user()->email }}</span>
                     <form action="{{ route('admin.logout') }}" method="POST" style="display: inline;">
@@ -299,6 +417,32 @@
             @yield('content')
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarClose = document.getElementById('sidebarClose');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            }
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', toggleSidebar);
+            }
+
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', toggleSidebar);
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', toggleSidebar);
+            }
+        });
+    </script>
 </body>
 
 </html>

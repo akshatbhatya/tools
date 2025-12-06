@@ -123,4 +123,90 @@ class AdminController extends Controller
 
         return back()->with('success', 'Google Ads settings updated successfully!');
     }
+
+    /**
+     * Show Pages list
+     */
+    public function pages()
+    {
+        $pages = \App\Models\Page::all();
+        return view('admin.pages.index', compact('pages'));
+    }
+
+    /**
+     * Show Edit Page form
+     */
+    public function editPage($id)
+    {
+        $page = \App\Models\Page::findOrFail($id);
+        return view('admin.pages.edit', compact('page'));
+    }
+
+    /**
+     * Update Page
+     */
+    public function updatePage(Request $request, $id)
+    {
+        $page = \App\Models\Page::findOrFail($id);
+
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'canonical_url' => 'nullable|url',
+            'og_image' => 'nullable|url',
+            'schema_markup' => 'nullable|string',
+        ]);
+
+        $page->update($request->only([
+            'title',
+            'meta_title',
+            'meta_description',
+            'meta_keywords',
+            'canonical_url',
+            'og_image',
+            'schema_markup'
+        ]));
+
+        return redirect()->route('admin.pages.index')->with('success', 'Page SEO updated successfully!');
+    }
+    /**
+     * Sync Pages from Routes
+     */
+    public function syncPages()
+    {
+        $routes = \Illuminate\Support\Facades\Route::getRoutes();
+        $addedCount = 0;
+
+        foreach ($routes as $route) {
+            $routeName = $route->getName();
+
+            // Skip routes without names, admin routes, api routes, and debugbar routes
+            if (
+                !$routeName ||
+                str_starts_with($routeName, 'admin.') ||
+                str_starts_with($routeName, 'sanctum.') ||
+                str_starts_with($routeName, 'ignition.') ||
+                str_starts_with($routeName, '_debugbar.') ||
+                str_starts_with($routeName, 'livewire.')
+            ) {
+                continue;
+            }
+
+            // Check if page already exists
+            if (!\App\Models\Page::where('route_name', $routeName)->exists()) {
+                // Create new page entry
+                \App\Models\Page::create([
+                    'route_name' => $routeName,
+                    'title' => ucwords(str_replace(['.', '-', '_'], ' ', $routeName)),
+                    'meta_title' => ucwords(str_replace(['.', '-', '_'], ' ', $routeName)) . ' - ToolsHub',
+                    'meta_description' => 'Default description for ' . $routeName,
+                ]);
+                $addedCount++;
+            }
+        }
+
+        return back()->with('success', "Synced successfully! $addedCount new pages added.");
+    }
 }

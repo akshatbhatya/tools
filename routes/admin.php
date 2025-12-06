@@ -19,4 +19,10 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     // Google Ads Settings
     Route::get('/settings/google-ads', [AdminController::class, 'googleAds'])->name('settings.google-ads');
     Route::post('/settings/google-ads', [AdminController::class, 'updateGoogleAds']);
+
+    // SEO Pages Management
+    Route::get('/pages', [AdminController::class, 'pages'])->name('pages.index');
+    Route::post('/pages/sync', [AdminController::class, 'syncPages'])->name('pages.sync');
+    Route::get('/pages/{id}/edit', [AdminController::class, 'editPage'])->name('pages.edit');
+    Route::post('/pages/{id}', [AdminController::class, 'updatePage'])->name('pages.update');
 });
